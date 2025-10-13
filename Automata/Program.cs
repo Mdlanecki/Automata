@@ -46,52 +46,13 @@ DFA dFA = new DFA(
 
 );
 
-Console.WriteLine("Enter word");
-
-String word = Console.ReadLine();
-
-Console.WriteLine(dFA.traverse(word));
 
 
-
-
-// Function to generate DOT representation of the DFA
-string GenerateDot(List<State> states, List<char> alphabet)
+while (true)
 {
-    StringBuilder sb = new StringBuilder();
-    sb.AppendLine("digraph DFA {");
-    sb.AppendLine("    rankdir=LR;"); // left to right
-    sb.AppendLine("    node [shape = circle];");
+        Console.WriteLine("Enter word");
 
-    // Mark accepting states with doublecircle
-    foreach (var state in states)
-    {
-        if (state.isAcceptingState)
-            sb.AppendLine($"    {state.Name} [shape=doublecircle];");
-    }
+    String word = Console.ReadLine();
 
-    // Invisible start node pointing to the initial state
-    sb.AppendLine("    start [shape=point];");
-    var initialState = states.Find(s => s.isInitialState);
-    sb.AppendLine($"    start -> {initialState.Name};");
-
-    // Add transitions
-    foreach (var state in states)
-    {
-        foreach (var kvp in state.Transitions)
-        {
-            char symbol = kvp.Key;
-            State targetState = kvp.Value;
-            sb.AppendLine($"    {state.Name} -> {targetState.Name} [label=\"{symbol}\"];");
-        }
-    }
-
-    sb.AppendLine("}");
-    return sb.ToString();
+    Console.WriteLine(dFA.traverse(word));
 }
-
-// Usage
-string dot = GenerateDot(states, alphabet);
-File.WriteAllText("dfa.dot", dot);
-
-Console.WriteLine("DOT file generated as dfa.dot. You can convert it to PNG using Graphviz: dot -Tpng dfa.dot -o dfa.png");

@@ -1,5 +1,4 @@
-﻿
-using Automata;
+﻿using Automata;
 using System.Diagnostics.Tracing;
 using System.Text;
 using System.IO;

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace Automata
 {
@@ -19,30 +21,38 @@ namespace Automata
             InitialState = initialState;
             AcceptingStates = acceptingStates;
         }
-        public String traverse(String word)
+        public string Traverse(string word)
         {
             for (int i = 0; i < word.Length; i++)
             {
-                if (!Alphabet.Contains(word[i]) || word[i] != 'e')
+                if (!Alphabet.Contains(word[i]))
                 {
                     return "Word contains symbols not in the alphabet";
                 }
             }
 
-            State currentState = InitialState;
+            var q = new Queue<(State state, int iWord)>();
+            var visited = new HashSet<(State state, int iWord)>();
 
-            for (int i = 0; i < word.Length; i++)
+            q.Enqueue((InitialState, 0));
+
+            while (q.Count > 0)
             {
-                currentState = currentState.Transitions[word[i]];
+                var node = q.Dequeue();
+                var currentState = node.state;
+                var iWord = node.iWord;
+
+                if (iWord == word.Length && AcceptingStates.Contains(currentState))
+                {
+                    return "ACCEPT";
+                }
+
+                visited.Add((currentState, iWord));
+
+
             }
-            if (this.AcceptingStates.Contains(currentState))
-            {
-                return "ACCEPT";
-            }
-            else
-            {
-                return "REJECT";
-            }
+
+
         }
     }
 }

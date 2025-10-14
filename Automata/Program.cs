@@ -2,6 +2,7 @@
 using System.Diagnostics.Tracing;
 using System.Text;
 using System.IO;
+using System.Security.Cryptography;
 
 Console.WriteLine("Enter number of states");
 int numStates = int.Parse(Console.ReadLine());
@@ -14,17 +15,43 @@ for (int i = 1; i <= numStates; i++)
 {
     string stateName = $"q{i}";
     bool isInitial = i == 1; 
-    states.Add(new State(stateName, new Dictionary<char, State>(), isInitial));
+    states.Add(new State(stateName, new Dictionary<char, List<State>>(), isInitial));
 }
 
-foreach(var state in states)
+
+Console.WriteLine("Is the automata a DFA or NFA? (d/n)");
+char automataType = Char.Parse(Console.ReadLine());
+
+foreach (var state in states)
 {
     foreach (char symbol in alphabet)
     {
-        Console.WriteLine("State: " + state.Name + " symbol: " + symbol.ToString() + ", Add state jumped to by symbol");
-        string targetStateName = Console.ReadLine();
-        State targetState = states.Find(s => s.Name == targetStateName);   
-        state.Transitions[symbol] = targetState;
+
+        if (automataType == 'n' || automataType == 'N')
+        {
+            Console.WriteLine("State: " + state.Name + " symbol: " + symbol.ToString() + ", Add states jumped to by symbol by listing them with a comma");
+            string targetStateNames = Console.ReadLine();
+
+            if(targetStateNames == "")
+            {
+                // Split, trim, and find State objects
+                var stateNames = targetStateNames.Split(',')
+                                                 .Select(s => s.Trim())
+                                                 .ToList();
+
+                var targetStates = states.Where(s => stateNames.Contains(s.Name)).ToList();
+
+                // Add to transitions
+                state.Transitions.Add(symbol, targetStates);
+            }     
+        }
+        else
+        {
+            Console.WriteLine("State: " + state.Name + " symbol: " + symbol.ToString() + ", Add state jumped to by symbol");
+            string targetStateName = Console.ReadLine();
+            State targetState = states.Find(s => s.Name == targetStateName);
+            state.Transitions.Add(symbol, new List<State> { targetState });
+        }
     }
 
     Console.WriteLine("Is " + state.Name + " an accepting state? (y/n)");
@@ -37,21 +64,44 @@ foreach(var state in states)
 }
 
 
-DFA dFA = new DFA(
+if(automataType == 'n' || automataType == 'N')
+{
+    NFA nFA = new NFA(
+        states,
+        alphabet,
+        states.Find(s => s.isInitialState),
+        states.Where(s => s.isAcceptingState).ToList()
+        );
+
+    while (true)
+    {
+        Console.WriteLine("Enter word");
+
+        String word = Console.ReadLine();
+
+        Console.WriteLine(nFA.Traverse(word));
+    }
+}
+else
+{
+    DFA dFA = new DFA(
     states,
     alphabet,
     states.Find(s => s.isInitialState),
     states.Where(s => s.isAcceptingState).ToList()
+    );
 
-);
-
-
-
-while (true)
-{
+    while (true)
+    {
         Console.WriteLine("Enter word");
 
-    String word = Console.ReadLine();
+        String word = Console.ReadLine();
 
-    Console.WriteLine(dFA.traverse(word));
+        Console.WriteLine(dFA.traverse(word));
+    }
 }
+
+
+
+
+

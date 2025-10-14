@@ -14,9 +14,9 @@ namespace Automata
 
         public bool isAcceptingState { get; set; }
 
-        public Dictionary<char, State> Transitions { get; set; }
+        public Dictionary<char, List<State> > Transitions { get; set; }
 
-        public State(string name, Dictionary<char, State> Transitions, bool isIniitalState = false, bool isAcceptingState = false) {
+        public State(string name, Dictionary<char, List<State>> Transitions, bool isIniitalState = false, bool isAcceptingState = false) {
             Name = name;
             this.isInitialState = isIniitalState;
             this.Transitions = Transitions;
@@ -24,6 +24,6 @@ namespace Automata
         }
 
 
-        
+
     }
 }

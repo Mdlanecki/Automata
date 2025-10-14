@@ -40,7 +40,7 @@ namespace Automata
 
             for (int i = 0; i < word.Length; i++)
             {
-                currentState = currentState.Transitions[word[i]];
+                currentState = currentState.Transitions[word[i]][0];
             }
 
             if (this.AcceptingStates.Contains(currentState))

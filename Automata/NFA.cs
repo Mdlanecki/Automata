@@ -49,10 +49,24 @@ namespace Automata
 
                 visited.Add((currentState, iWord));
 
+                foreach(var transition in currentState.Transitions)
+                {
+                    char symbol = transition.Key;
+                    List<State> nextStates = transition.Value;
+                    if (iWord < word.Length && word[iWord] == symbol)
+                    {
+                        foreach (var nextState in nextStates)
+                        {
+                            if (!visited.Contains((nextState, iWord + 1)))
+                            {
+                                q.Enqueue((nextState, iWord + 1));
+                            }
+                        }
+                    }
+                }
 
             }
-
-
+            return "REJECT";
         }
     }
 }

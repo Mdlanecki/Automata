@@ -32,7 +32,7 @@ foreach (var state in states)
             Console.WriteLine("State: " + state.Name + " symbol: " + symbol.ToString() + ", Add states jumped to by symbol by listing them with a comma");
             string targetStateNames = Console.ReadLine();
 
-            if(targetStateNames == "")
+            if(targetStateNames != "")
             {
                 // Split, trim, and find State objects
                 var stateNames = targetStateNames.Split(',')
@@ -53,6 +53,23 @@ foreach (var state in states)
             state.Transitions.Add(symbol, new List<State> { targetState });
         }
     }
+
+    if (automataType == 'n' || automataType == 'N')
+    {
+        Console.WriteLine("Add epsilon transitions for state " + state.Name + " by listing target states with a comma, or leave blank for none");
+        string epsilonTargetStateNames = Console.ReadLine();
+
+        if(epsilonTargetStateNames != "")
+        {
+            var stateNames = epsilonTargetStateNames.Split(',')
+                                                     .Select(s => s.Trim())
+                                                     .ToList();
+            var targetStates = states.Where(s => stateNames.Contains(s.Name)).ToList();
+            state.Transitions.Add('e', targetStates);
+        }
+
+    }
+    
 
     Console.WriteLine("Is " + state.Name + " an accepting state? (y/n)");
     Char response = Char.Parse(Console.ReadLine());
